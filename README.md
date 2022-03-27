@@ -12,6 +12,7 @@ ROOT -- README.md
      -- cpp 
 	-- main.cpp
 	-- Nodes.cpp
+     -- dynamicProblemsSimple.cpp
      -- headers
 	-- Nodes.h
      -- tests
@@ -31,5 +32,17 @@ A class with int value, pointers to Next and Prev Nodes, and methods to access I
 #####	Spot
 A struct with int value, pointers to Next and Prev Spots. No get/set methods needed.
 
+#####     Linkedlists (Doubly linked)
+Uses the previously implemented Node class. Includes Head and Tail pointers, and methods for pushing and poping new Nodes, traversal in both directions and printing.
+
+#####     canSum
+An algorithm for solving the problem: given a target and array of numbers, can you add some of the number in the array to equal the target? 
+
+#####     howSum
+Modified problem from the previous where now you must return the combination of numbers that sums to the target. I created my own solution as well as implemented a solution following a lecture on dynamic programming.
+
 #### Current Tests
-#####	NodesAndSpot - tests simple implementation of Nodes and Spots
+#####	NodesAndSpot   - tests simple implementation of Nodes and Spots
+#####     linkedLists    - tests implementation of linked list.
+#####     canSum         - tests can sum algorithm on some sample inputs.
+#####     howSum         - tests two implementations of howSum, with timing comparisons.

@@ -15,6 +15,21 @@ class Node{
 
 };
 
+class LinkedList{
+	Node* cur;
+	Node* Head;
+	Node* Tail;
+	public:
+		LinkedList(int n);
+		void push(int n);
+		bool pop(int n);
+		void print();
+		Node* traverseForward();
+		Node* traverseBackward();
+		Node* search(int n);
+		~LinkedList();
+};
+
 struct spot{
 	int val;
 	spot* Next;
