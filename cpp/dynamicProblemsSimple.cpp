@@ -60,3 +60,26 @@ vector<int> howSum(int target, vector<int> nums, map<int,vector<int>> memo = {})
 	}
 	return ret;
 };
+
+
+vector<int> bestSum(int target, vector<int> nums){ // My Solution
+	/* 
+		Base case: target = zero;
+		Work: 
+			Go through nums, subtract from target. If result < 0 skip, if result == 0 store, if result > 0 recurse. 
+
+			After going through all nums, will have a collection of combinations that sum to current target, of which select the combination with the least elements.
+
+		Work scales from full problem down to trivial problems.
+	 */
+	if( target == 0) return {};
+	vector<<vector<int>> temp = {};
+	for( auto num : nums){
+		if ( target - num = 0) temp.push_back({num});
+		if ( target - num > 0) temp.push_back(bestSum(target-num, nums));
+	}
+	// get shortest length solution from temp
+	vector<int> best = {}
+	for( auto sol in temp) if (sol.size() < best.max_size()) best = sol;
+	return best;
+}
