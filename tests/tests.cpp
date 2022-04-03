@@ -1,8 +1,12 @@
 #include "../cpp/node.cpp"
+#include "../cpp/graph.cpp"
 #include "../cpp/dynamicProblemsSimple.cpp"
 #include <iostream>
 #include <vector>
+#include <map>
 #include <chrono>
+#include <stdlib.h>
+#include <time.h>
 using namespace std::chrono;
 void nodeandSpotTests(){
 	Node* A = new Node(5);
@@ -50,6 +54,110 @@ void linkedListTests(){
 	A->pop(7);
 	cout<< "Print list\n";
 	A->print();
+	return;
+}
+
+void graphTests(){
+	Graph* g = new Graph();
+	cout << "Add Vertices 7 and 9. Try to re-add 9.\n\t";
+	auto a = g->addVertex(7);
+	auto b = g->addVertex(9);
+	g->addVertex(9); // should have error
+	cout << "Add Vertices 3 and 5. Try to print graph, should say no edges. \n\t";
+	auto c = g->addVertex(3);
+	auto d = g->addVertex(5);
+	g->printGraph();
+	cout << "Add edges: \n\t7-3 with weight 7\n\t3-5 with weight 9\n\t 9-7 with weight 4\nPrint graph.\n";
+	g->addEdge(g->getVertex(7),g->getVertex(3),7);
+	g->addEdge(g->getVertex(3),g->getVertex(5),9);
+	g->addEdge(g->getVertex(9),g->getVertex(7),4);
+	g->printGraph();
+
+
+
+	
+	return;
+}
+
+void graphDijkstrasRand(){
+	srand (time(NULL));
+	int numV = rand() % 25 + 1; // set number of vertices
+	Graph* G = new Graph();
+	for(int i = 0; i < numV; i++){
+		G->addVertex(i); // add predetermined number of vertices
+	}
+	for(int i = 0; i < numV; i++){
+		auto V = G->getVertex(i);
+		G->addEdge(V,G->getVertex(rand() % numV +1), rand()% 10 + 1); 
+		// add an edge to each vertex
+	}
+	auto source = G->getVertex(rand() % numV + 1);// 
+	auto dest = source;
+	while(source == dest) dest = G->getVertex(rand() % numV + 1);
+		// get destination that is not source
+	G->printGraph();
+	//tuple<int, map< Graph::Vertex*,Graph::Vertex* > > = G->dijkstra(source,dest);
+	auto [w, path] = G->dijkstra(source,dest);
+	if(path[dest] == nullptr){
+		cout << "Did not find a path.\n";
+		return;
+	}
+	cout << "Distance from source: " << source->n << " to dest: " << dest->n <<" is : " << w << ".\n";
+	cout << "Path is:\n\t";
+	auto temp = dest;
+	cout << "start loop\n\t";
+	cout << temp -> n;
+	while(temp != source){
+		cout << "v:" << temp->n << "-";
+		temp = path[temp];
+	}
+	cout << source->n << ".\n";
+	return;
+};
+
+void graphDijkstras(){
+	Graph* G = new Graph();
+	for(int i = 0; i < 10; i++){
+		G->addVertex(i);
+	}
+	G->printGraph();
+	auto source = G->getVertex(0);
+	auto dest= G->getVertex(1);
+	G->addEdge(G->getVertex(0),G->getVertex(1),1);
+	G->printGraph();
+	cout << "------------------------\n";
+	auto runAndPrint = [G](auto source, auto dest){
+		auto [ w, path] = G->dijkstra(source,dest);
+		if(path[dest] == nullptr){
+			cout << "Did not find a path.\n";
+			return;
+		}
+		cout << "Distance from source: " << source->n << " to dest: " << dest->n <<" is : " << w << ".\n";
+		cout << "Path is:\n\t";
+		auto temp = dest;
+		while(temp != source && temp != nullptr){
+			cout << "v:" << temp->n << "-";
+			temp = path[temp];
+		}
+		cout << "v:" << source->n << ".\n";
+	};
+	runAndPrint(source,dest);
+	G->addEdge(G->getVertex(1),G->getVertex(5),3);
+	G->addEdge(G->getVertex(3),G->getVertex(2),5);
+	G->addEdge(G->getVertex(4),G->getVertex(8),7);
+	G->addEdge(G->getVertex(6),G->getVertex(3),4);
+	G->addEdge(G->getVertex(9),G->getVertex(1),2);
+	G->addEdge(G->getVertex(4),G->getVertex(2),1);
+	G->printGraph();
+	cout << "------------------------\n";
+	source = G->getVertex(0);
+	dest = G->getVertex(5);
+	runAndPrint(source,dest);
+	G->addEdge(G->getVertex(5),G->getVertex(7),3);
+	G->addEdge(G->getVertex(7),G->getVertex(4),7);
+	G->printGraph();
+	cout << "------------------------\n";
+	runAndPrint(G->getVertex(0),G->getVertex(8));
 	return;
 }
 void canSumTest(){
