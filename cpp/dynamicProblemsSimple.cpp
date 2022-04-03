@@ -73,13 +73,13 @@ vector<int> bestSum(int target, vector<int> nums){ // My Solution
 		Work scales from full problem down to trivial problems.
 	 */
 	if( target == 0) return {};
-	vector<<vector<int>> temp = {};
+	vector<vector<int>> temp = {};
 	for( auto num : nums){
-		if ( target - num = 0) temp.push_back({num});
+		if ( target - num == 0) temp.push_back({num});
 		if ( target - num > 0) temp.push_back(bestSum(target-num, nums));
 	}
 	// get shortest length solution from temp
-	vector<int> best = {}
-	for( auto sol in temp) if (sol.size() < best.max_size()) best = sol;
+	vector<int> best = {};
+	for( auto sol : temp) if (sol.size() < best.max_size()) best = sol;
 	return best;
 }
