@@ -61,6 +61,10 @@ bool Graph::addEdge(Vertex* a, Vertex* b,int n){
         a==nullptr?cout<<"a is null.\n":cout <<"b is null.\n";
         return false;
     }
+    if(a == b){
+        cout << "Cannot have an edge from vertex to itself.\n";
+        return false;
+    }
     for(auto e : Edges){ 
         if(e->a == a && e->b == b){
             if(n < e->weight) return e->weight = n;
@@ -104,9 +108,9 @@ tuple<int,map<Graph::Vertex*,Graph::Vertex*>> Graph::dijkstra(Vertex* source, Ve
         //cout << u->n << "\n";
         for(auto e : Edges){
             if(e->a == u){
-                Q.push(e->b);
                 tempdist = dist[u] + e->weight;
                 if (tempdist < dist[e->b]){
+                    Q.push(e->b);
                     dist[e->b] = tempdist;
                     prev[e->b] = u;
                 }

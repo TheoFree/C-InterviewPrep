@@ -81,21 +81,28 @@ void graphTests(){
 
 void graphDijkstrasRand(){
 	srand (time(NULL));
-	int numV = rand() % 25 + 1; // set number of vertices
+	int numV = rand() % 15 + 3; // set number of vertices, minimum 3
 	Graph* G = new Graph();
 	for(int i = 0; i < numV; i++){
 		G->addVertex(i); // add predetermined number of vertices
 	}
 	for(int i = 0; i < numV; i++){
 		auto V = G->getVertex(i);
+		for( int j = 0; j < rand() % 3 + 1; j++ )
 		G->addEdge(V,G->getVertex(rand() % numV +1), rand()% 10 + 1); 
-		// add an edge to each vertex
+		// add an edge to each vertex at least once up to 3 times
 	}
-	auto source = G->getVertex(rand() % numV + 1);// 
+	auto source = G->getVertex(rand() % numV);// 
 	auto dest = source;
-	while(source == dest) dest = G->getVertex(rand() % numV + 1);
+	
+	while(source == dest){
+		auto temp  = G->getVertex(rand() % numV );
+		if( temp != source && temp != nullptr) dest = temp;
 		// get destination that is not source
+	}
 	G->printGraph();
+	cout << "\nSource is Vertex "<< source->n << "\n";
+	cout << "Destination is Vertex " << dest->n << "\n";
 	//tuple<int, map< Graph::Vertex*,Graph::Vertex* > > = G->dijkstra(source,dest);
 	auto [w, path] = G->dijkstra(source,dest);
 	if(path[dest] == nullptr){

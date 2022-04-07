@@ -1,50 +1,82 @@
 #include "../tests/tests.cpp"
 #include <iostream>
+#include <vector>
 #include <chrono>
 using namespace std::chrono;
 
 int main(int argc, char **argv){
-	bool testing = true;
-	// cout << "Start\n";	
+	bool interactive = false;
 	if(argc == 2){
-	//	cout << " Argc ==2\n";
-	        if(string(argv[1]) == "-f"){
-	//	       	cout << " Argv[1] == -f\n";
-			testing = false;
+		vector<string> options = {"-f","NodesAndSpot","linkedLists","graph","canSum","howSum","dijkstra","dijkstraRand"};
+		int selection = -1;
+		string input = string(argv[1]);
+		for(int i = 0; i<options.size();i++){
+			if(input==options[i]){
+				selection = i;
+				break;
+			}
 		}
-	        else{
-	//		cout << "Start\n";
-			cout << "Invalid input 1: " << argv[1] << "\n";
-			return 0;
+		if(selection >= 0){
+			switch (selection){
+			
+			case 0: // -f
+				interactive = true;
+				break;
+			case 1: // NodesAndSpot
+				cout << " ----------\n";
+				nodeandSpotTests();
+				return 1;
+			case 2: // linkedLists
+				cout << " ----------\n";
+				linkedListTests();
+				return 1;
+			case 3: // graph
+				cout << " ----------\n";
+				graphTests();
+				return 1;
+			case 4: // canSum
+				cout << " ----------\n";
+				canSumTest();
+				return 1;
+			case 5: // howSum
+				cout << " ----------\n";
+				howSumTest();
+				return 1;
+			case 6: // dijkstras
+				cout << " ----------\n";
+				graphDijkstras();
+				return 1;
+			case 7:
+				cout << " ----------\n";
+				graphDijkstrasRand();
+				return 1;
+			default:
+				cout << "Invalid input 1: " << input << "\n";
+				return 0;
+			}
 		}
+		
 	}
 	string input;
-	while(!testing){
+	while(interactive){
 		cout << " ----------\n";
 		cout << "Test options are:"; 
 		cout << "\n-----Data Structures-----";
 		cout << "\n\t\'NodesAndSpot\'- test nodes class and spot struct";
 		cout << "\n\t\'linkedLists\'- test linked list class";
 		cout << "\n\t\'graph\' - test graph implementation";
-		cout << "\n\t\'dijkstra\' - test dijkstras alg. on random graph";
 		cout << "\n-----Dynamic Programing Problems";
 		cout <<	"\n\t\'canSum\' - test canSum implementation";
 		cout <<	"\n\t\'howSum\' - test howSum implementation";
+		cout << "\n-----Dijkstra tests";
+		cout << "\n\t\'dijkstra\' - test dijkstras alg.";
+		cout << "\n\t\'dijkstraRand\' - test dijkstras alg. on random set of vertices and edges.";
+
 		cout << "\n\t\'exit\' - quit\n";
 		cin >> input;
 		if(input == "NodesAndSpot"){
 			cout << " ----------\n";
 			nodeandSpotTests();
-			continue;
-		}
-		if(input == "canSum"){
-			cout << " ----------\n";
-			canSumTest();
-			continue;
-		}
-		if(input == "howSum"){
-			cout << " ----------\n";
-			howSumTest();
 			continue;
 		}
 		if(input == "linkedLists"){
@@ -57,19 +89,33 @@ int main(int argc, char **argv){
 			graphTests();
 			continue;
 		}
+		if(input == "canSum"){
+			cout << " ----------\n";
+			canSumTest();
+			continue;
+		}
+		if(input == "howSum"){
+			cout << " ----------\n";
+			howSumTest();
+			continue;
+		}
 		if(input == "dijkstra"){
 			cout << " ----------\n";
 			graphDijkstras();
 			continue;
 		}
+		if(input == "dijkstraRand"){
+			cout << " ----------\n";
+			graphDijkstrasRand();
+			continue;
+		}
 		if(input == "exit"){
-			testing = true;
 			return 0;
 		}
 		else cout << "Invalid input\n.";
 		contin:;
 	}
-	if(testing){
+	if(!interactive){
 		cout << " ----------\n";
 		cout <<"Start nodeandSpotTest()\n";
 		nodeandSpotTests();
