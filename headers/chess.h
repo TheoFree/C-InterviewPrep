@@ -4,48 +4,52 @@
 class chess{
     private :
         struct coordinate;
-        class team{
-            bool color; // true for black, false for white
-            class piece{
-                std::tuple<int,char> position;
+        class piece{
                 bool alive;
-                std::vector<coordinate> moves();
-                std::string id;
-                coordinate* start;
+                bool color;
                 coordinate* pos;
                 public:
                     bool capture();
-                    piece& move();
-                    int getID();
+                    bool getColor();
                     piece(std::string id, bool color, coordinate* start);
+                    coordinate* getPos();
             };
-            class pawn : public piece{
-                bool first_move;
-                bool opposite_end;
-                public:
-                    pawn(std::string id, bool color,  coordinate* start);
-            };
-            class knight : public piece{
-                public:
-                    knight(std::string id, bool color,  coordinate* start);
-            };
-            class bishop : public piece{
-                public:
-                    bishop(std::string id, bool color,  coordinate* start);
-            };
-            class rook : public piece{
-                public:
-                    rook(std::string id, bool color,  coordinate* start);
-            };
-            class king : public piece{
-                bool check;
-                public:
-                    king(std::string id, bool color,  coordinate* start);
-            };
-            class queen : public piece{
+        class pawn : public piece{
+            bool first_move;
+            bool opposite_end;
+            public:
+                pawn(std::string id, bool color,  coordinate* start);
+                piece* move(bool color,std::string dest,coordinate** board);
+        };
+        class knight : public piece{
+            public:
+                knight(std::string id, bool color,  coordinate* start);
+                piece* move(std::string dest);
+        };
+        class bishop : public piece{
+            public:
+                bishop(std::string id, bool color,  coordinate* start);
+                piece* move(std::string dest);
+        };
+        class rook : public piece{
+            public:
+                rook(std::string id, bool color,  coordinate* start);
+                piece* move(std::string dest);
+        };
+        class king : public piece{
+            bool check;
+            public:
+                king(std::string id, bool color,  coordinate* start);
+                piece* move(std::string dest);
+        };
+        class queen : public piece{
                 public:
                     queen(std::string id, bool color,  coordinate* start);
+                    piece* move(std::string dest);
             };
+        class team{
+            bool color; // true for black, false for white
+            
             
             pawn* p1;
             pawn* p2;
@@ -65,13 +69,14 @@ class chess{
             queen* q;
             public:
                 team(bool color, coordinate** board);
+                bool movePiece(piece* piece, std::string dest);
         };
         struct coordinate{
             int x;
-            char y;
+            int y;
             bool black;
-            int occupant_id; // can be null.
-            coordinate( int x, char y, bool black);
+            piece* occupant; // can be null.
+            coordinate( int x, int y, bool black);
         };
         /*grid: x =   0  1  2  3  4  5  6  7
                 y = A -  @  -  @  -  @  -  @
