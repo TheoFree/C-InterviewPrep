@@ -8,11 +8,16 @@ class chess{
                 bool alive;
                 bool color;
                 coordinate* pos;
+                
                 public:
                     bool capture();
                     bool getColor();
+                    bool isKing();
                     piece(std::string id, bool color, coordinate* start);
                     coordinate* getPos();
+                    piece* move(std:: string dest, chess::coordinate** board);
+                    bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board);
+                    void setPos(int x, int y);
             };
         class pawn : public piece{
             bool first_move;
@@ -25,20 +30,31 @@ class chess{
             public:
                 knight(std::string id, bool color,  coordinate* start);
                 piece* move(std::string dest);
+                bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
         };
         class bishop : public piece{
             public:
                 bishop(std::string id, bool color,  coordinate* start);
                 piece* move(std::string dest);
+                bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
         };
         class rook : public piece{
+            bool first_move;
+            
             public:
                 rook(std::string id, bool color,  coordinate* start);
                 piece* move(std::string dest);
+                bool isFirstMove();
+                void moved();
+                bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
         };
         class king : public piece{
             bool check;
+            bool first_move;
             public:
+                bool isKing();
+                bool isFirstMove();
+                void moved();
                 king(std::string id, bool color,  coordinate* start);
                 piece* move(std::string dest);
         };
@@ -49,7 +65,7 @@ class chess{
             };
         class team{
             bool color; // true for black, false for white
-            
+            coordinate** board;
             
             pawn* p1;
             pawn* p2;
@@ -69,7 +85,7 @@ class chess{
             queen* q;
             public:
                 team(bool color, coordinate** board);
-                bool movePiece(piece* piece, std::string dest);
+                bool movePiece(std::string moveString);
         };
         struct coordinate{
             int x;
@@ -78,15 +94,16 @@ class chess{
             piece* occupant; // can be null.
             coordinate( int x, int y, bool black);
         };
-        /*grid: x =   0  1  2  3  4  5  6  7
-                y = A -  @  -  @  -  @  -  @
-                    B @  -  @  -  @  -  @  -
-                    C -  @  -  @  -  @  -  @
-                    D @  -  @  -  @  -  @  -
-                    E -  @  -  @  -  @  -  @
-                    F @  -  @  -  @  -  @  -
-                    G -  @  -  @  -  @  -  @
-                    H @  -  @  -  @  -  @  -
+        /*
+........grid:.x.=...0..1..2..3..4..5..6..7
+..............y.=.0.#..X..#..X..#..X..#..X
+..................1.X..#..X..#..X..#..X..#
+..................2.#..X..#..X..#..X..#..X
+..................3.X..#..X..#..X..#..X..#
+..................4.#..X..#..X..#..X..#..X
+..................5.X..#..X..#..X..#..X..#
+..................6.#..X..#..X..#..X..#..X
+..................7.X..#..X..#..X..#..X..#
          */
         coordinate* board[8][8];
         team* white;
