@@ -66,7 +66,7 @@ class chess{
         class team{
             bool color; // true for black, false for white
             coordinate** board;
-            
+            std::string index[16] = {"p1","p2","p3","p4","p5","p6","p7","p8","r1","k1","b1","q","k","b2","k2","r2"};
             pawn* p1;
             pawn* p2;
             pawn* p3;

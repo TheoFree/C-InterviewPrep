@@ -151,7 +151,7 @@ chess::piece* chess::piece::move(std::string dest, chess::coordinate** board){
         std::cout<<"Bad input\n";
         return this;
     }
-}
+};
 bool chess::knight::moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board){
     //knight can move up 2 over 1 in any direction
     if((x == my_x+2 && y == my_y-1)
@@ -236,11 +236,36 @@ bool chess::team::movePiece( std::string moveString){
     }
     std::string piece = "";
     int x,y = -1;
+    int space = moveString.find(' ');
+    piece = moveString.substr(0,space);
+    x = int(moveString.substr(space,space+1));
+    y = int(moveString.substr(space+2));
     int i = 0;
-
-    for(int;moveString[i] != ' ' || i < moveString.length();i++){
-        piece[i] = moveString[i]
+    for(auto p : index){
+        if(p == piece) break;
+        i++;
     }
+    switch(i){
+        case 0: //p1
+        case 1: //p2
+        case 2: //p3 
+        case 3: //p4
+        case 4: //p5
+        case 5: //p6
+        case 6: //p7
+        case 7: //p8
+        case 8: //r1
+        case 9: //k1
+        case 10://b1
+        case 11://q
+        case 12://k
+        case 13://b2
+        case 14://k2
+        case 15://r2
+        default: cout<< "Piece entered was not found\n.";
+    }
+    
+    
     
     return false;
 }
