@@ -3,7 +3,6 @@
 #include <typeinfo>
 //Constructors
 chess::chess(){
-    char alpha[8] = {'a','b','c','d','e','f','g'};
     for(int i = 0; i < 8; i++){
         for(int j = 0; j < 8; j++){
             board[i][j] = new coordinate(i, j, ((i%2==0) != (j%2==0))?true:false); // create board.
@@ -77,11 +76,10 @@ chess::coordinate::coordinate(int x, int y, bool black){
 };
 
 //Member methods
-chess::piece* chess::pawn::move(bool color, std::string dest, chess::coordinate** board){
+chess::piece* chess::pawn::move(bool color, int x, int y, chess::coordinate** board){
     //dest should be of the form "1B" i.e. first char is int x, second is char y
     try{
-        int x = int(dest[0]);
-        int y = int(dest[1]);
+        
         coordinate* pos = getPos();
         if(x-1<=pos->x<=x+1){ // ensure x move is only in valid range of all potential pawn moves.
             std::cout << "Pawns can only move up the board straight or capture to the side one space.";
@@ -206,6 +204,34 @@ bool chess::king::isFirstMove(){return first_move;};
 bool chess::rook::isFirstMove(){return first_move;};
 bool chess::piece::getColor(){return color;};
 chess::coordinate* chess::piece::getPos(){return pos;};
+chess::piece* chess::team::getPiece(std::string pieceID){
+    int i = 0;
+    for(auto p : index){
+        if(p == pieceID) break;
+        i++;
+    }
+    switch(i){
+        case 0: return p1;
+        case 1: return p2;
+        case 2: return p3;
+        case 3: return p4;
+        case 4: return p5;
+        case 5: return p6;
+        case 6: return p7;
+        case 7: return p8;
+        case 8: return r1;
+        case 9: return k1;
+        case 10:return b1;
+        case 11:return q;
+        case 12:return k;
+        case 13:return b2;
+        case 14:return k2;
+        case 15:return r2;
+        default:{ 
+            cout<< "Piece entered was not found\n.";
+            return nullptr;
+    }
+}
 
 //Gameplay 
 
@@ -234,38 +260,35 @@ bool chess::team::movePiece( std::string moveString){
             return true;
         }
     }
-    std::string piece = "";
+    std::string pieceID = "";
     int x,y = -1;
     int space = moveString.find(' ');
-    piece = moveString.substr(0,space);
+    pieceID = moveString.substr(0,space);
     x = int(moveString.substr(space,space+1));
     y = int(moveString.substr(space+2));
-    int i = 0;
-    for(auto p : index){
-        if(p == piece) break;
-        i++;
-    }
-    switch(i){
-        case 0: //p1
-        case 1: //p2
-        case 2: //p3 
-        case 3: //p4
-        case 4: //p5
-        case 5: //p6
-        case 6: //p7
-        case 7: //p8
-        case 8: //r1
-        case 9: //k1
-        case 10://b1
-        case 11://q
-        case 12://k
-        case 13://b2
-        case 14://k2
-        case 15://r2
-        default: cout<< "Piece entered was not found\n.";
-    }
-    
-    
-    
+    piece* piece = getPiece(pieceID);
+    if(piece != nullptr)return piece->move(color,x,y,board); 
     return false;
+}
+
+void chess::play(){
+    bool turn = false; // start with white.
+    std::string moveInput;
+    while(!checkmate){
+        getBoardState();
+        if(turn?white->canCastle():black->canCastle())cout <<"You might be able to castle.\n";
+        cout<<"Enter you input as: 
+            \n\t\"castle\" to castle
+            \n\t\"p1 x,y\" to move where p1 is piece id and x,y are move coordinates.
+        \nMake your move. \n";
+        cin<<moveInput;
+        if((turn?white:black)->movePiece(moveInput)){
+            turn = !turn;
+        }
+        else cout<<"Invalid move, try again.\n";
+
+
+    }
+
+    return;
 }

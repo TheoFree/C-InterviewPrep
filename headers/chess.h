@@ -24,7 +24,7 @@ class chess{
             bool opposite_end;
             public:
                 pawn(std::string id, bool color,  coordinate* start);
-                piece* move(bool color,std::string dest,coordinate** board);
+                piece* move(bool color,int x,int y,coordinate** board);
         };
         class knight : public piece{
             public:
@@ -83,6 +83,7 @@ class chess{
             rook* r2;
             king* k;
             queen* q;
+            piece* getPiece(std::string id);
             public:
                 team(bool color, coordinate** board);
                 bool movePiece(std::string moveString);
@@ -109,9 +110,10 @@ class chess{
         team* white;
         team* black;
         bool checkmate;
-    public :
-        chess();
+        void play();
         chess& getBoardState(); // prints current state of both teams on board.
         chess& move(); // on current move, enter via command line next move in format "piece id" - "coordinate" such as k1 - E6
+    public :
+        chess();
 
 };
