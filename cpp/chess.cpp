@@ -117,7 +117,7 @@ chess::piece* chess::pawn::move(bool color, int x, int y, chess::coordinate** bo
     }
     return this;
 };
-chess::piece* chess::piece::move(std::string dest, chess::coordinate** board){
+chess::piece* chess::piece::move(bool color, int x, int y, chess::coordinate** board){
     try{
         int x = int(dest[0]);
         int y = int(dest[1]);
@@ -228,11 +228,11 @@ chess::piece* chess::team::getPiece(std::string pieceID){
         case 14:return k2;
         case 15:return r2;
         default:{ 
-            cout<< "Piece entered was not found\n.";
+            std::cout<< "Piece entered was not found\n.";
             return nullptr;
+        }
     }
-}
-
+};
 //Gameplay 
 
 bool chess::team::movePiece( std::string moveString){
@@ -264,28 +264,46 @@ bool chess::team::movePiece( std::string moveString){
     int x,y = -1;
     int space = moveString.find(' ');
     pieceID = moveString.substr(0,space);
-    x = int(moveString.substr(space,space+1));
-    y = int(moveString.substr(space+2));
+    x = std::stoi(moveString.substr(space,space+1));
+    y = std::stoi(moveString.substr(space+2));
     piece* piece = getPiece(pieceID);
-    if(piece != nullptr)return piece->move(color,x,y,board); 
+    if(piece != nullptr)return piece->move(this->color,x,y,board); 
     return false;
 }
 
 void chess::play(){
     bool turn = false; // start with white.
     std::string moveInput;
+    bool whiteCheck = false;
+    bool blackCheck = false;
     while(!checkmate){
         getBoardState();
-        if(turn?white->canCastle():black->canCastle())cout <<"You might be able to castle.\n";
-        cout<<"Enter you input as: 
-            \n\t\"castle\" to castle
-            \n\t\"p1 x,y\" to move where p1 is piece id and x,y are move coordinates.
-        \nMake your move. \n";
-        cin<<moveInput;
-        if((turn?white:black)->movePiece(moveInput)){
+        if(turn?blackCheck:whiteCheck){ // if team in check
+            if((turn?black:white)->escapeCheck(turn?white:black)){ // check to see if you can escape
+                std::cout << "You are in check. Get your king away from the danger.\n";
+
+                //Implement logic for an in-check turn. 
+                //If you are here, there must exist a move to save you. 
+                //allow player to try to move and check that their move is in the set of valid moves. 
+            }
+            else{
+                std::cout << "Check mate. Better luck next time.\n";
+            }
+        };
+        std::cout << "Enter you input as:";
+        std::cout << "\n\t \"castle\" to castle";
+        std::cout << "\n\t \"p1 x,y\" to move where p1 is piece id and x,y are move coordinates.";
+        std::cout << "\nMake your move. \n ";
+
+        std::cin>>moveInput;
+        if((turn?black:white)->movePiece(moveInput)){
+            if((turn?black:white)->inCheck()){
+                turn?blackCheck:whiteCheck = true;
+            }
             turn = !turn;
         }
-        else cout<<"Invalid move, try again.\n";
+        else std::cout<<"Invalid move, try again.\n";
+
 
 
     }

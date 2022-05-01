@@ -1,0 +1,22 @@
+Main game loop logic:
+
+1. check if previous move put you in check
+    if yes -> have to move to get out of check 
+        L Must check there exists a move that can be made to get king out of check.
+            L if yes, let player attempt move and check that that is one of the valid moves.
+            L else, checkmate, game over.
+    if no -> continue.
+2. player attempts regular move.
+3. if regular move attempted is valid, check to see if that put opponent king in check.
+    if yes -> set flag for opponents next move (1.)
+    else -> continue to next turn.
+
+Need to create:
+    **Method that checks that input move doesn't put your own king in check. 
+    Method that determines what the set of valid moves to get the king out of check will be. 
+        - Save the piece that put the king in check to see what move will work?
+        - Use function from before. 
+        - options for getting out of check:
+            * Move king
+            * capture threat
+            * block threat

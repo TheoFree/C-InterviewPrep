@@ -15,7 +15,7 @@ class chess{
                     bool isKing();
                     piece(std::string id, bool color, coordinate* start);
                     coordinate* getPos();
-                    piece* move(std:: string dest, chess::coordinate** board);
+                    piece* move(bool color, int x, int y, chess::coordinate** board);
                     bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board);
                     void setPos(int x, int y);
             };
@@ -84,7 +84,10 @@ class chess{
             king* k;
             queen* q;
             piece* getPiece(std::string id);
+            bool* canCastle();
             public:
+                bool inCheck();
+                bool escapeCheck(team* opponent);
                 team(bool color, coordinate** board);
                 bool movePiece(std::string moveString);
         };
@@ -95,24 +98,14 @@ class chess{
             piece* occupant; // can be null.
             coordinate( int x, int y, bool black);
         };
-        /*
-........grid:.x.=...0..1..2..3..4..5..6..7
-..............y.=.0.#..X..#..X..#..X..#..X
-..................1.X..#..X..#..X..#..X..#
-..................2.#..X..#..X..#..X..#..X
-..................3.X..#..X..#..X..#..X..#
-..................4.#..X..#..X..#..X..#..X
-..................5.X..#..X..#..X..#..X..#
-..................6.#..X..#..X..#..X..#..X
-..................7.X..#..X..#..X..#..X..#
-         */
         coordinate* board[8][8];
         team* white;
         team* black;
         bool checkmate;
         void play();
         chess& getBoardState(); // prints current state of both teams on board.
-        chess& move(); // on current move, enter via command line next move in format "piece id" - "coordinate" such as k1 - E6
+        chess& move(); 
+        // on current move, enter via command line next move in format:"piece id" "coordinate" such as "k1 4,5"
     public :
         chess();
 
