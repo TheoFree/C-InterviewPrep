@@ -109,15 +109,15 @@ LinkedList::~LinkedList(){
 
 spot::spot(int n){
 	this->val = n;
-	this->Next = NULL;
-	this->Prev = NULL;
+	this->Next = nullptr;
+	this->Prev = nullptr;
 	return;
 };
 Node::~Node(){
-	if(Next != NULL) delete Next;
-	if(Prev != NULL) delete Prev;
+	if(Next != nullptr) Next = nullptr;
+	if(Prev != nullptr) Prev = nullptr;
 };
 spot::~spot(){
-	if(Next != NULL) delete Next;
-	if(Prev != NULL) delete Prev;
+	if(Next != nullptr) delete Next;
+	if(Prev != nullptr) delete Prev;
 };

@@ -1,6 +1,7 @@
 #include "../cpp/node.cpp"
 #include "../cpp/graph.cpp"
 #include "../cpp/dynamicProblemsSimple.cpp"
+#include "../cpp/queue.cpp"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -56,7 +57,23 @@ void linkedListTests(){
 	A->print();
 	return;
 }
-
+void queueTests(){
+	Q Q;
+	cout << "Init empty queue.\n";
+	Q.print();
+	cout << "Push 1\n";
+	Q.push(1);
+	Q.print();
+	cout << "Push 4, 2, 9\n";
+	Q.push(4);
+	Q.push(2);
+	Q.push(9);
+	Q.print();
+	cout << "Pop gave me: ";
+	cout << Q.pop() << "\n";
+	Q.print();
+	return;
+};
 void graphTests(){
 	Graph* g = new Graph();
 	cout << "Add Vertices 7 and 9. Try to re-add 9.\n\t";

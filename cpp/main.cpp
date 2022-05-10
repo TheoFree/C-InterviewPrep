@@ -7,7 +7,7 @@ using namespace std::chrono;
 int main(int argc, char **argv){
 	bool interactive = false;
 	if(argc == 2){
-		vector<string> options = {"-f","NodesAndSpot","linkedLists","graph","canSum","howSum","dijkstra","dijkstraRand"};
+		vector<string> options = {"-f","NodesAndSpot","linkedLists","graph","canSum","howSum","dijkstra","dijkstraRand","queue"};
 		int selection = -1;
 		string input = string(argv[1]);
 		for(int i = 0; i<options.size();i++){
@@ -50,6 +50,10 @@ int main(int argc, char **argv){
 				cout << " ----------\n";
 				graphDijkstrasRand();
 				return 1;
+			case 8:
+				cout << " ----------\n";
+				queueTests();
+				return 1;
 			default:
 				cout << "Invalid input 1: " << input << "\n";
 				return 0;
@@ -64,6 +68,7 @@ int main(int argc, char **argv){
 		cout << "\n-----Data Structures-----";
 		cout << "\n\t\'NodesAndSpot\'- test nodes class and spot struct";
 		cout << "\n\t\'linkedLists\'- test linked list class";
+		cout << "\n\t\'queue\' - test queue implementation";
 		cout << "\n\t\'graph\' - test graph implementation";
 		cout << "\n-----Dynamic Programing Problems";
 		cout <<	"\n\t\'canSum\' - test canSum implementation";
@@ -109,6 +114,11 @@ int main(int argc, char **argv){
 			graphDijkstrasRand();
 			continue;
 		}
+		if(input == "queue"){
+			cout << " ----------\n";
+			queueTests();
+			continue;
+		}
 		if(input == "exit"){
 			return 0;
 		}
@@ -124,6 +134,10 @@ int main(int argc, char **argv){
 		cout <<"Start linkedListTests()\n";
 		linkedListTests();
 
+		cout << " ----------\n";
+		cout <<"Start queueTests()\n";
+		queueTests();
+		
 		cout << " ----------\n";
 		cout << "Start graphTests()\n";
 		graphTests();
