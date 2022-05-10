@@ -12,10 +12,12 @@ ROOT -- README.md
      -- cpp/ 
 	     -- main.cpp
 	     -- Nodes.cpp
+          -- queue.cpp
           -- Graph.cpp
           -- dynamicProblemsSimple.cpp
      -- headers/
 	     -- Nodes.h
+          -- queue.h
           -- Graph.h
      -- tests/
 	     -- tests.cpp
@@ -37,6 +39,9 @@ A struct with int value, pointers to Next and Prev Spots. No get/set methods nee
 #####     Linkedlists (Doubly linked)
 Uses the previously implemented Node class. Includes Head and Tail pointers, and methods for pushing and poping new Nodes, traversal in both directions and printing.
 
+#####     Queue
+Simple queue implementation. May later implement priority queue.
+
 #####      Graph
 Graph implementation made using structs. Might add onto later.
 
@@ -52,6 +57,7 @@ Implemented as memeber function inside Graph class. Uses priority queue that pop
 #### Current Tests
 #####	NodesAndSpot   - tests simple implementation of Nodes and Spots.
 #####     linkedLists    - tests implementation of linked list.
+#####     queue          - tests implementation of queue.
 #####     graphTests     - tests implementation of graph class.
 #####     graphDijkstras - tests dijkstras on different graphs. 
 #####     canSum         - tests can sum algorithm on some sample inputs.
