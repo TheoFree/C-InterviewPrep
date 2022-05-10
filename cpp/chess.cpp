@@ -1,6 +1,7 @@
 #include "../headers/chess.h"
 #include <iostream>
 #include <typeinfo>
+#include <vector>
 //Constructors
 chess::chess(){
     for(int i = 0; i < 8; i++){
@@ -309,4 +310,31 @@ void chess::play(){
     }
 
     return;
+}
+
+bool chess::team::inCheck(){
+
+}
+
+bool chess::team::canEscapeCheck(team* opponent){
+    // go through opponent pieces and figure out where the threats are
+    coordinate* myKingPos = this->k->getPos();
+    std::vector<piece*> threats = {};
+    for(auto i : opponent->index){
+        auto piece = opponent->getPiece(i);
+        std::vector<chess::coordinate*> moves = piece->getMoves();
+        for(auto m : moves){
+            if(m == myKingPos) threats.push_back(piece);
+        }
+    }
+    // go through moves you can make
+    for(auto i : index){
+        auto piece = getPiece(i);
+
+    }
+
+    // of available moves check that king will no longer be in check for at least one
+    
+    
+    
 }

@@ -18,6 +18,7 @@ class chess{
                     piece* move(bool color, int x, int y, chess::coordinate** board);
                     bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board);
                     void setPos(int x, int y);
+                    std::vector<chess::coordinate*> getMoves();
             };
         class pawn : public piece{
             bool first_move;
@@ -87,7 +88,7 @@ class chess{
             bool* canCastle();
             public:
                 bool inCheck();
-                bool escapeCheck(team* opponent);
+                bool canEscapeCheck(team* opponent);
                 team(bool color, coordinate** board);
                 bool movePiece(std::string moveString);
         };
