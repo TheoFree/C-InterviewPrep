@@ -5,9 +5,10 @@ class chess{
     private :
         struct coordinate;
         class piece{
-                bool alive;
-                bool color;
-                coordinate* pos;
+                protected:
+                    bool alive;
+                    bool color;
+                    coordinate* pos;
                 
                 public:
                     bool capture();
@@ -18,14 +19,16 @@ class chess{
                     piece* move(bool color, int x, int y, chess::coordinate** board);
                     bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board);
                     void setPos(int x, int y);
-                    std::vector<chess::coordinate*> getMoves();
+                    virtual std::vector<chess::coordinate*> getMoves();
             };
         class pawn : public piece{
             bool first_move;
             bool opposite_end;
             public:
+                bool moveLogicChecks(int my_x, int my_y, int x, int y, chess::coordinate** board);
                 pawn(std::string id, bool color,  coordinate* start);
                 piece* move(bool color,int x,int y,coordinate** board);
+                std::vector<chess::coordinate*> getMoves();
         };
         class knight : public piece{
             public:

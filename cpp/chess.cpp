@@ -77,47 +77,8 @@ chess::coordinate::coordinate(int x, int y, bool black){
 };
 
 //Member methods
-chess::piece* chess::pawn::move(bool color, int x, int y, chess::coordinate** board){
-    //dest should be of the form "1B" i.e. first char is int x, second is char y
-    try{
-        
-        coordinate* pos = getPos();
-        if(x-1<=pos->x<=x+1){ // ensure x move is only in valid range of all potential pawn moves.
-            std::cout << "Pawns can only move up the board straight or capture to the side one space.";
-            return this;
-        }
-        piece* space_occupant = board[x][y].occupant;
-        if(y == (color?pos->y+1:pos->y-1) || //normal move
-        (first_move && y == color?pos->y+2:pos->y-2) || // first move could be +2
-        (space_occupant != nullptr && (y==color?pos->y+1:y-1 && (x== pos->x+1 || x==pos->x-1 ))) && //handles pawn capture behavior
-        0<=y<=7 &&
-        0<=x<=7
-        ){    //space must exist on board
-            if(space_occupant == nullptr){ // space unoccupied
-                pos->y = y;
-                first_move = false;
-                return this;
-            }
-            else{
-                if(space_occupant->getColor() != color){
-                    pos->y = y;
-                    first_move = false;
-                    space_occupant->capture(); // removes piece from game
-                    board[x][y].occupant = this;
-                }
-                else{
-                    std::cout << "Your own piece is in that spot.\n";
-                    return this;
-                }
-            }
-        }
-    
-    }catch(error_t e){
-        std::cout<<"Bad input\n";
-        return this;
-    }
-    return this;
-};
+
+
 chess::piece* chess::piece::move(bool color, int x, int y, chess::coordinate** board){
     try{
         int x = int(dest[0]);
@@ -151,6 +112,20 @@ chess::piece* chess::piece::move(bool color, int x, int y, chess::coordinate** b
         return this;
     }
 };
+
+bool chess::pawn::moveLogicChecks(int my_x, int my_y, int x, int y, chess::coordinate** board){
+    // check move in normal bounds. 
+    // Can move forward 2 on first move or 1 always.
+    // Can move forward and over 1 when capturing.
+    // black =   my_x + 1 = x || my_x -1 , my_y + 1 = y || 2 on firstmove
+    if(((x == my_x + 1 || x == my_x -1 ) && y == color? my_y+1 : my_y-1)
+    ||(x == my_x && (y == color? my_y + 1 : my_y - 1 
+            || (first_move && y == color? my_y + 2 : my_y - 2)
+            )
+        )) return true;
+
+    return false;
+}
 bool chess::knight::moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board){
     //knight can move up 2 over 1 in any direction
     if((x == my_x+2 && y == my_y-1)
@@ -223,8 +198,8 @@ chess::piece* chess::team::getPiece(std::string pieceID){
         case 8: return r1;
         case 9: return k1;
         case 10:return b1;
-        case 11:return q;
-        case 12:return k;
+        case 11: return q;
+        case 12: return k;
         case 13:return b2;
         case 14:return k2;
         case 15:return r2;
@@ -234,6 +209,13 @@ chess::piece* chess::team::getPiece(std::string pieceID){
         }
     }
 };
+std::vector<chess::coordinate*> chess::pawn::getMoves(){
+    bool myColor = getColor();
+    coordinate* myPos = getPos();
+    if(moveLogicChecks(myPos->x,myPos->y,myColor?my))
+    return {};
+}
+
 //Gameplay 
 
 bool chess::team::movePiece( std::string moveString){
