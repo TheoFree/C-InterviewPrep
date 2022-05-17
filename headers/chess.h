@@ -9,14 +9,14 @@ class chess{
                     bool alive;
                     bool color;
                     coordinate* pos;
-                
+                    bool validMove(int my_x, int my_y, int x, int y);
                 public:
                     bool capture();
                     bool getColor();
                     bool isKing();
                     piece(std::string id, bool color, coordinate* start);
                     coordinate* getPos();
-                    piece* move(bool color, int x, int y, chess::coordinate** board);
+                    bool move( int x, int y, chess::coordinate** board);
                     bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board);
                     void setPos(int x, int y);
                     virtual std::vector<chess::coordinate*> getMoves();
@@ -27,19 +27,18 @@ class chess{
             public:
                 bool moveLogicChecks(int my_x, int my_y, int x, int y, chess::coordinate** board);
                 pawn(std::string id, bool color,  coordinate* start);
-                piece* move(bool color,int x,int y,coordinate** board);
-                std::vector<chess::coordinate*> getMoves();
+                
+                std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
         };
         class knight : public piece{
             public:
                 knight(std::string id, bool color,  coordinate* start);
-                piece* move(std::string dest);
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
         };
         class bishop : public piece{
             public:
                 bishop(std::string id, bool color,  coordinate* start);
-                piece* move(std::string dest);
+                
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
         };
         class rook : public piece{
@@ -47,7 +46,7 @@ class chess{
             
             public:
                 rook(std::string id, bool color,  coordinate* start);
-                piece* move(std::string dest);
+                
                 bool isFirstMove();
                 void moved();
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
@@ -60,16 +59,16 @@ class chess{
                 bool isFirstMove();
                 void moved();
                 king(std::string id, bool color,  coordinate* start);
-                piece* move(std::string dest);
+                bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board );
         };
         class queen : public piece{
                 public:
                     queen(std::string id, bool color,  coordinate* start);
-                    piece* move(std::string dest);
+                    bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board );
             };
         class team{
             bool color; // true for black, false for white
-            coordinate** board;
+            //coordinate** board;
             std::string index[16] = {"p1","p2","p3","p4","p5","p6","p7","p8","r1","k1","b1","q","k","b2","k2","r2"};
             pawn* p1;
             pawn* p2;
@@ -93,7 +92,7 @@ class chess{
                 bool inCheck();
                 bool canEscapeCheck(team* opponent);
                 team(bool color, coordinate** board);
-                bool movePiece(std::string moveString);
+                bool movePiece(std::string moveString, coordinate** board);
         };
         struct coordinate{
             int x;
