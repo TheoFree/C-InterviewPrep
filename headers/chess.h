@@ -27,26 +27,28 @@ class chess{
             public:
                 bool moveLogicChecks(int my_x, int my_y, int x, int y, chess::coordinate** board);
                 pawn(std::string id, bool color,  coordinate* start);
-                
                 std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
         };
         class knight : public piece{
             public:
                 knight(std::string id, bool color,  coordinate* start);
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
+                std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
+
         };
         class bishop : public piece{
+            bool notBlocked(chess::piece* occupant);
             public:
                 bishop(std::string id, bool color,  coordinate* start);
-                
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
+                std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
         };
         class rook : public piece{
             bool first_move;
             
             public:
                 rook(std::string id, bool color,  coordinate* start);
-                
+                std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
                 bool isFirstMove();
                 void moved();
                 bool moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board);
@@ -59,12 +61,14 @@ class chess{
                 bool isFirstMove();
                 void moved();
                 king(std::string id, bool color,  coordinate* start);
+                std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
                 bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board );
         };
         class queen : public piece{
                 public:
                     queen(std::string id, bool color,  coordinate* start);
                     bool moveLogicChecks(int my_x, int my_y, int x, int y,chess::coordinate** board );
+                    std::vector<chess::coordinate*> getMoves(chess::coordinate** board);
             };
         class team{
             bool color; // true for black, false for white

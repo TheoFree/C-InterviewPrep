@@ -121,15 +121,14 @@ bool chess::pawn::moveLogicChecks(int my_x, int my_y, int x, int y, chess::coord
 bool chess::knight::moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board){
     if(!validMove(my_x,my_y,x,y)) return false;
     //knight can move up 2 over 1 in any direction
-    if((x == my_x+2 && y == my_y-1)
+    return (x == my_x+2 && y == my_y-1)
     ||(x == my_x+2 && y == my_y+1)
     ||(x == my_x-2 && y == my_y-1)
     ||(x == my_x-2 && y == my_y+1)
     ||(x == my_x-1 && y == my_y-2)
     ||(x == my_x+1 && y == my_y-2)
     ||(x == my_x-1 && y == my_y+2)
-    ||(x == my_x+1 && y == my_y+2)) return true;
-    return false;
+    ||(x == my_x+1 && y == my_y+2);
 };
 bool chess::bishop::moveLogicChecks(int my_x, int my_y,int x, int y, chess::coordinate** board){
     if(!validMove(my_x,my_y,x,y)) return false;
@@ -140,8 +139,8 @@ bool chess::bishop::moveLogicChecks(int my_x, int my_y,int x, int y, chess::coor
     int x_pos = shift_x < 0 ? 1: -1;  // if new value greater than current , positive modifier else negative.
     int y_pos = shift_y < 0 ? 1: -1; 
     // need to walk diagonal path in direction of attempted move to find first object encountered. 
-    for(int i = my_x; i!=x; i += shift_x){
-        for(int j = my_y; j!=y; j += shift_y){
+    for(int i = my_x; i!=x; i += x_pos){
+        for(int j = my_y; j!=y; j += y_pos){
             if(board[i][j].occupant != nullptr) return false;
         }
     }
@@ -166,8 +165,35 @@ bool chess::king::moveLogicChecks(int my_x, int my_y, int x, int y, chess::coord
     return validMove(my_x,my_y,x,y) && (abs(my_x - x) <= 1 && abs(my_y - y) <= 1);
 };
 bool chess::queen::moveLogicChecks(int my_x, int my_y, int x, int y, chess::coordinate**board){
-    if(!validMove(my_x,my_y,x,y)) return false;
-    
+    if(!validMove(my_x,my_y,x,y)) return false; // validMove will verify at least one axis changes
+    if(board[x][y].occupant && color != board[x][y].occupant->getColor()) return false;
+    int shiftX = my_x - x;
+    int shiftY = my_y - y;
+    int absShiftX = abs(shiftX);
+    int absShiftY = abs(shiftY);
+    if(absShiftX > 0 && absShiftY > 0){ // change in both axis requires bishop like check.
+        if( absShiftX != absShiftY) return false; // guard against non linear or diagonal moves.
+        int walkX = shiftX < 0? 1 : -1;
+        int walkY = shiftY < 0? 1 : -1;
+        for(int i = my_x; i != x; i +=walkX){
+            for(int j = my_y; j != y; j +=walkY){
+                if(board[i][j].occupant && (i != x && j != y)) return false; 
+                // return false if run into a piece before dest.
+            }
+        }
+        return true; 
+    }
+    else{ // otherwise will be rook behavior
+        int walk;
+        if(shiftX) walk = shiftX>1?-1:1;
+        if(shiftY) walk = shiftY>1?-1:1;
+        // dir true for x shift or false for y
+        for(int i = shiftX?my_x:my_y; i!= shiftX?x:y; i+=walk){
+            if((shiftX?board[i][y]:board[x][i]).occupant && shiftX?x:y !=i) return false;
+        }
+        return true;
+    }
+    return false;
 };
 
 
@@ -235,10 +261,266 @@ std::vector<chess::coordinate*> chess::pawn::getMoves(chess::coordinate** board)
     if(occupant != nullptr && occupant->getColor() != color)
         moves.push_back(&board[x0+1][color?y0 + 1 : y0 - 1]);
     return moves;
-}
-
-//Gameplay 
-
+};
+std::vector<chess::coordinate*> chess::knight::getMoves(chess::coordinate** board){
+    int X = pos->x;
+    int Y = pos->y;
+    std::tuple<int,int> allMoves[8] = {
+        {X+1,Y+2},
+        {X+1,Y-2},
+        {X-1,Y+2},
+        {X-1,Y-2},
+        {X+2,Y+1},
+        {X-2,Y+1},
+        {X+2,Y-1},
+        {X-2,Y-1}
+    };
+    int x,y;
+    std::vector<chess::coordinate*> validMoves = {};
+    for(auto pair : allMoves){
+        x = std::get<0>(pair);
+        y = std::get<1>(pair);
+        if(!moveLogicChecks(X,Y,x,y,board)) continue; // invalid move
+        chess::piece* temp = board[x][y].occupant;
+        if(temp && color == temp->getColor()) continue; // space occupied by same team piece
+        validMoves.push_back(&board[x][y]);
+    }
+    return validMoves;
+};
+std::vector<chess::coordinate*> chess::bishop::getMoves(chess::coordinate** board){
+    int X = pos->x;
+    int Y = pos->y;
+    std::vector<chess::coordinate*> validMoves = {};
+    int x,y;
+    bool ll,lo,ol,oo = true; // flags for edge of board or obstacle piece reached
+    chess::piece* temp;
+    for(int i = 1; i<7; i++){
+        x = X+i;
+        y = Y+i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ll = false;
+        if(ll){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                ll = false;
+            }
+        }
+        x = X-i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ol = false;
+        if(ol){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                ol = false;
+            }
+        }
+        y = Y-i;
+        if(!moveLogicChecks(X,Y,x,y,board)) oo = false;
+        if(oo){
+           temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                oo = false;
+            }
+        }
+        x = X+i;
+        if(!moveLogicChecks(X,Y,x,y,board)) lo = false;
+        if(lo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                lo = false;
+            }
+        }
+    }
+    return validMoves;
+};
+std::vector<chess::coordinate*> chess::rook::getMoves(chess::coordinate** board){
+    int X = pos->x;
+    int Y = pos->y;
+    std::vector<chess::coordinate*> validMoves = {};
+    int x,y;
+    bool ll,lo,ol,oo = true; // flags for edge of board or obstacle piece reached
+    chess::piece* temp;
+    for(int i = 1; i<7; i++){
+        x = X + i;
+        y = Y;
+        if(!moveLogicChecks(X,Y,x,y,board)) ll = false;
+        if(ll){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                ll = false;
+            }
+        }
+        x = X;
+        y = Y + i;
+        if(!moveLogicChecks(X,Y,x,y,board)) lo = false;
+        if(lo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                lo = false;
+            }
+        }
+        x = X - i;
+        y = Y;
+        if(!moveLogicChecks(X,Y,x,y,board)) oo = false;
+        if(oo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                oo = false;
+            }
+        }
+        x = X;
+        y = Y - i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ol = false;
+        if(ol){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                ol = false;
+            }
+        }        
+    }
+    return validMoves;
+};
+std::vector<chess::coordinate*> chess::king::getMoves(chess::coordinate** board){
+    int X = pos->x;
+    int Y = pos->y;
+    std::vector<chess::coordinate*> validMoves = {};
+    int x,y;
+    std::tuple<int,int> allMoves[8] = {
+        {X+1,Y},
+        {X+1,Y+1},
+        {X,Y+1},
+        {X-1,Y+1},
+        {X-1,Y},
+        {X-1,Y-1},
+        {X,Y-1},
+        {X+1,Y-1}
+    };
+    std::vector<chess::coordinate*> validMoves = {};
+    for(auto pair : allMoves){
+        x = std::get<0>(pair);
+        y = std::get<1>(pair);
+        if(!moveLogicChecks(X,Y,x,y,board)) continue; // invalid move
+        chess::piece* temp = board[x][y].occupant;
+        if(temp && color == temp->getColor()) continue; // space occupied by same team piece
+        validMoves.push_back(&board[x][y]);
+    }
+    return validMoves;
+};
+std::vector<chess::coordinate*> chess::queen::getMoves(chess::coordinate** board){
+    int X = pos->x;
+    int Y = pos->y;
+    std::vector<chess::coordinate*> validMoves = {};
+    int x,y;
+    bool ll,lo,ol,oo = true; // flags for edge of board or obstacle piece reached
+    chess::piece* temp;
+    for(int i = 1; i<7; i++){ // bishop like movements
+        x = X+i;
+        y = Y+i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ll = false;
+        if(ll){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                ll = false;
+            }
+        }
+        x = X-i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ol = false;
+        if(ol){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                ol = false;
+            }
+        }
+        y = Y-i;
+        if(!moveLogicChecks(X,Y,x,y,board)) oo = false;
+        if(oo){
+           temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                oo = false;
+            }
+        }
+        x = X+i;
+        if(!moveLogicChecks(X,Y,x,y,board)) lo = false;
+        if(lo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(color != temp->getColor()) validMoves.push_back(&board[x][y]);
+                lo = false;
+            }
+        }
+    }
+    ll,lo,ol,oo = true; // flags for edge of board or obstacle piece reached
+    chess::piece* temp;
+    for(int i = 1; i<7; i++){ // rook like movements
+        x = X + i;
+        y = Y;
+        if(!moveLogicChecks(X,Y,x,y,board)) ll = false;
+        if(ll){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                ll = false;
+            }
+        }
+        x = X;
+        y = Y + i;
+        if(!moveLogicChecks(X,Y,x,y,board)) lo = false;
+        if(lo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                lo = false;
+            }
+        }
+        x = X - i;
+        y = Y;
+        if(!moveLogicChecks(X,Y,x,y,board)) oo = false;
+        if(oo){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                oo = false;
+            }
+        }
+        x = X;
+        y = Y - i;
+        if(!moveLogicChecks(X,Y,x,y,board)) ol = false;
+        if(ol){
+            temp = board[x][y].occupant;
+            if(!temp) validMoves.push_back(&board[x][y]);
+            else{
+                if(temp->getColor() != color) validMoves.push_back(&board[x][y]);
+                ol = false;
+            }
+        }        
+    }
+    return validMoves;
+};
+//Gameplay
 bool chess::team::movePiece( std::string moveString, chess::coordinate** board){
     //moveString should be of the form "p1 1,1" where p1 = piece identifier and 1,1 = x,y
     //moveString can also have form of "castle" to attempt to castle
